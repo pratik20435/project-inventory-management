@@ -4,8 +4,10 @@ interface Product {
   price: number;
   category: string;
   _id?: string;
+  imageUrl: string;
 }
 
+const accessToken = localStorage.getItem("token") ?? "";
 export async function createNewProduct(product: Product) {
   await fetch("http://localhost:3000/product", {
     method: "POST",
@@ -17,12 +19,19 @@ export async function createNewProduct(product: Product) {
       description: product.description,
       price: product.price,
       category: product.category,
+      imageUrl: product.imageUrl,
     }),
   });
 }
 export async function getAllProducts() {
-  const response = await fetch("http://localhost:3000/products");
-  return response.json();
+  console.log(accessToken, "@accessToken in getAllProducts");
+  const response = await fetch("http://localhost:3000/products", {
+    headers: {
+      authorization: accessToken,
+    },
+  });
+  const data = response.json();
+  return data;
 }
 
 export async function deleteProduct(id: string) {
@@ -46,4 +55,13 @@ export async function updateProduct(product: Product) {
     }
   );
   return response.json();
+}
+
+export async function uploadProductImage(formData: FormData) {
+  const response = await fetch("http://localhost:3000/product-image", {
+    method: "POST",
+    body: formData,
+  });
+  const data = await response.json();
+  return data;
 }

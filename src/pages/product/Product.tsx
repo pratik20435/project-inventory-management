@@ -4,8 +4,12 @@ import {
   deleteProduct,
   getAllProducts,
   updateProduct,
+  uploadProductImage,
 } from "../../api/Products";
 import { getAllCategories } from "../../api/Category";
+import { Modal } from "@mantine/core";
+import { Button } from "@mantine/core";
+import { FileInput } from "@mantine/core";
 
 // import axios from 'axios';
 
@@ -16,7 +20,12 @@ export default function Product() {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
+  const [modelNumber , setModelNumber] = useState("");
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isModalOpen, setIsModalopen] = useState(false);
+  const [productImageUrl, setproductImageUrl] = useState(
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlndpwDalSNF8TzBG6T7kGv73l0IOReNJpKw&s"
+  );
 
   async function handleUpdateProduct() {
     await updateProduct({
@@ -25,7 +34,9 @@ export default function Product() {
       description: description,
       price: parseFloat(price),
       category: category,
+      imageUrl: productImageUrl,
     });
+
     setIsEditMode(false);
     setCurrentProductId("");
     setProduct("");
@@ -60,8 +71,17 @@ export default function Product() {
       description: description,
       price: parseFloat(price),
       category: category,
+      imageUrl: productImageUrl,
     });
     fetchProducts();
+  }
+  async function handleFileChange(file: any) {
+    // const file= e.target.files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+    const data = await uploadProductImage(formData);
+    console.log(data);
+    setproductImageUrl(data.filename);
   }
   async function fetchProducts() {
     const products = await getAllProducts();
@@ -76,100 +96,93 @@ export default function Product() {
 
   return (
     <div>
-      <h1>Create New Products</h1>
-      <form>
-        <input
-          type="text"
-          name="name"
-          value={product}
-          onChange={(e) => setProduct(e.target.value)}
-          placeholder="Product Name"
-          required
-        />
-        <input
-          type="text"
-          name="description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Product Description"
-          required
-        />
-        <input
-          type="number"
-          name="price"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          placeholder="Product Price"
-          required
-        />
-        <select
-          name="category"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-        >
-          <option value="">Select Category</option>
-          {listOfCategory.map((cat: any) => (
-            <option key={cat._id} value={cat._id}>
-              {cat.name}
-            </option>
-          ))}
-        </select>
-
-        {isEditMode ? (
-          <button
-            onClick={handleUpdateProduct}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-yellow-600"
-            type="button"
-          >
-            Update Product
-          </button>
-        ) : (
-          <button
-            onClick={handleAddProduct}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-pink-600"
-            type="button"
-          >
-            Add Product
-          </button>
-        )}
-      </form>
-      <table className="min-w-full border-collapse border border-gray-200 text-center">
-        <thead className="border-b border-gray-200 bg-gray-100">
+      {/* <h1>Create New Products
+      </h1>
+      <Button
+      className="flex"
+       variant="filled" onClick={() => setIsModalopen(true)}>
+        Button product modal
+      </Button> */}
+      <div className="flex items-center justify-start gap-215 mt-4 mb-2">
+  <h1 className="text-2xl font-bold">Create New Products</h1>
+  <Button
+    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow"
+    variant="filled"
+    onClick={() => setIsModalopen(true)}
+  >
+    Button product modal
+  </Button>
+   </div>
+      
+      <table className="min-w-full border-collapse border border-gray-200 text-center mt-8 shadow-lg rounded-lg overflow-hidden">
+        <thead className="border-b border-gray-200 bg-blue-50">
           <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Category</th>
+            <th className="px-6 py-3 text-xs font-semibold text-gray-700 uppercase tracking-wider">
+              Image
+            </th>
+            <th className="px-6 py-3 text-xs font-semibold text-gray-700 uppercase tracking-wider">
+              Name
+            </th>
+            <th className="px-6 py-3 text-xs font-semibold text-gray-700 uppercase tracking-wider">
+              Description
+            </th>
+            <th className="px-6 py-3 text-xs font-semibold text-gray-700 uppercase tracking-wider">
+              Price
+            </th>
+            <th className="px-6 py-3 text-xs font-semibold text-gray-700 uppercase tracking-wider">
+              Category
+            </th>
+            <th className="px-6 py-3 text-xs font-semibold text-gray-700 uppercase tracking-wider">
+              Actions
+            </th>
           </tr>
-          {/* <button
-            onClick={() =>
-              updateProduct("684fd74b3234057a11d009a5", {
-                name: "Updated Product",
-                description: "Updated Description",
-                price: 99.99,
-                category: "Updated Category",
-              })
-            }
-          >
-            Update
-          </button> */}
-          {/* <button onClick={() => updateProduct(product._id, product)}>Update</button> */}
         </thead>
-        <tbody>
+        <tbody className="bg-white">
           {listOfProducts.map((product: any) => (
-            <tr key={product._id} className="border">
-              <td className="px-4 py-2">{product.name}</td>
-              <td className="px-4 py-2">{product.description}</td>
-              <td className="px-4 py-2">{product.price}</td>
+            <tr
+              key={product._id}
+              className="border-b hover:bg-gray-50 transition"
+            >
+              <td className="px-4 py-2 flex justify-center">
+                <img
+                  src={product.imageUrl}
+                  className="w-16 h-16 object-cover rounded shadow"
+                  alt={product.name}
+                />
+              </td>
+              <td className="px-4 py-2 font-medium text-gray-800">
+                {product.name}
+              </td>
+              <td className="px-4 py-2 text-gray-600">{product.description}</td>
+              <td className="px-4 py-2 text-blue-700 font-semibold">
+                ${product.price}
+              </td>
               <td className="px-4 py-2">{product?.category?.name}</td>
-              <td className="flex gap-2">
+              <td className="flex gap-2 justify-center py-2">
                 <button
-                  className="px-2 py-1 rounded-md bg-blue-400 text-white hover:bg-blue-600"
+                  className="px-3 py-1 rounded bg-yellow-500 text-white hover:bg-yellow-700 transition"
                   onClick={() => handleEditProduct(product)}
                 >
                   Edit
                 </button>
                 <button
+                  className="px-3 py-1 rounded bg-red-500 text-white hover:bg-red-700 transition"
+                  onClick={async () => {
+                    await deleteProduct(product._id);
+                    await fetchProducts();
+                  }}
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>  
+      {/* Edit
+                </button>
+                <button
+                className="px-2 py-1 rounded-md  text-white bg-red-600"
                   onClick={async () => {
                     await deleteProduct(product._id);
                     await fetchProducts();
@@ -181,7 +194,113 @@ export default function Product() {
             </tr>
           ))}
         </tbody>
-      </table>
+      </table> */}{" "}
+      
+      <Modal
+        opened={isModalOpen}
+        onClose={() => setIsModalopen(false)}
+        title={
+          <span className="text-xl font-semibold text-gray-800">
+            {isEditMode ? "Edit Product" : "Create New Product"}
+          </span>
+        }
+        overlayProps={{
+          className: "bg-black bg-opacity-40",
+        }}
+        classNames={{
+          body: "bg-white rounded-lg shadow-lg p-6",
+        }}
+      >
+        <form className="flex flex-col gap-4">
+          <input
+            type="text"
+            name="name"
+            value={product}
+            onChange={(e) => setProduct(e.target.value)}
+            placeholder="Product Name"
+            required
+            className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+          />
+          <input
+            type="text"
+            name="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Product Description"
+            required
+            className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+          />
+          <input
+            type="number"
+            name="price"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            placeholder="Product Price"
+            required
+            className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+          />
+           <input
+       type="text"
+        name="modelNumber"
+       value={modelNumber}
+          onChange={(e) => setModelNumber(e.target.value)}
+         placeholder="Model Number"
+          required
+         className="border border-purple-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
+          />
+          <select
+            name="category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+          >
+            <option value="">Select Category</option>
+            {listOfCategory.map((cat: any) => (
+              <option key={cat._id} value={cat._id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+          <FileInput
+            label="Product Image"
+            placeholder="Upload product image"
+            onChange={handleFileChange}
+            className="w-full"
+            classNames={{
+              input:
+                "border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 transition",
+              label: "mb-1 text-gray-700 font-medium",
+            }}
+          />
+
+          <div className="flex gap-2 mt-4">
+            {isEditMode ? (
+              <button
+                onClick={handleUpdateProduct}
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                type="button"
+              >
+                Update Product
+              </button>
+            ) : (
+              <button
+                onClick={handleAddProduct}
+                className="flex-1 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+                type="button"
+              >
+                Add Product
+              </button>
+            )}
+            <button
+              onClick={() => setIsModalopen(false)}
+              className="flex-1 px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition"
+              type="button"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }
