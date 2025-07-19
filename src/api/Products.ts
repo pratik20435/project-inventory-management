@@ -65,3 +65,13 @@ export async function uploadProductImage(formData: FormData) {
   const data = await response.json();
   return data;
 }
+
+export async function getProductById(id: string) {
+  const response = await fetch(`http://localhost:3000/product/${id}`, {
+    headers: {
+      authorization: accessToken,
+    },
+  });
+  const data = await response.json();
+  return data;
+}

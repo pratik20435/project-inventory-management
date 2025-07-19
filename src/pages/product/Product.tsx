@@ -10,6 +10,9 @@ import { getAllCategories } from "../../api/Category";
 import { Modal } from "@mantine/core";
 import { Button } from "@mantine/core";
 import { FileInput } from "@mantine/core";
+import useStore from "../../store/Store";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router";
 
 // import axios from 'axios';
 
@@ -20,12 +23,16 @@ export default function Product() {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
-  const [modelNumber , setModelNumber] = useState("");
+  const [modelNumber, setModelNumber] = useState("");
   const [isEditMode, setIsEditMode] = useState(false);
   const [isModalOpen, setIsModalopen] = useState(false);
   const [productImageUrl, setproductImageUrl] = useState(
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlndpwDalSNF8TzBG6T7kGv73l0IOReNJpKw&s"
   );
+
+  const addToCart = useStore((state) => state.addToCart);
+  const notify = () => toast("Added to cart successfully");
+  const navigate = useNavigate();
 
   async function handleUpdateProduct() {
     await updateProduct({
@@ -56,24 +63,11 @@ export default function Product() {
     getAllProducts();
   }, []);
   function handleEditProduct(product: any) {
-    setIsEditMode(true);
-    setCurrentProductId(product._id);
-    setProduct(product.name);
-    setDescription(product.description);
-    setPrice(product.price);
-    setCategory(product.category._id);
+    navigate(`/dashboard/product-edit/${product._id}`);
   }
 
   async function handleAddProduct() {
-    console.log(product, description, price, category);
-    createNewProduct({
-      name: product,
-      description: description,
-      price: parseFloat(price),
-      category: category,
-      imageUrl: productImageUrl,
-    });
-    fetchProducts();
+    navigate("/dashboard/product-add");
   }
   async function handleFileChange(file: any) {
     // const file= e.target.files[0];
@@ -103,17 +97,16 @@ export default function Product() {
        variant="filled" onClick={() => setIsModalopen(true)}>
         Button product modal
       </Button> */}
-      <div className="flex items-center justify-start gap-215 mt-4 mb-2">
-  <h1 className="text-2xl font-bold">Create New Products</h1>
-  <Button
-    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow"
-    variant="filled"
-    onClick={() => setIsModalopen(true)}
-  >
-    Button product modal
-  </Button>
-   </div>
-      
+      <div className="flex items-center justify-start gap-21 mt-4 mb-2">
+        <h1 className="text-2xl font-bold">Create New Products</h1>
+        <Button
+          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow justify-end"
+          variant="filled"
+          onClick={() => setIsModalopen(true)}
+        >
+          Button product modal
+        </Button>
+      </div>
       <table className="min-w-full border-collapse border border-gray-200 text-center mt-8 shadow-lg rounded-lg overflow-hidden">
         <thead className="border-b border-gray-200 bg-blue-50">
           <tr>
@@ -166,6 +159,15 @@ export default function Product() {
                   Edit
                 </button>
                 <button
+                  className="px-3 py-1 rounded bg-yellow-500 text-white hover:bg-yellow-700 transition"
+                  onClick={() => {
+                    addToCart(product);
+                    notify();
+                  }}
+                >
+                  Add to cart
+                </button>
+                <button
                   className="px-3 py-1 rounded bg-red-500 text-white hover:bg-red-700 transition"
                   onClick={async () => {
                     await deleteProduct(product._id);
@@ -178,7 +180,7 @@ export default function Product() {
             </tr>
           ))}
         </tbody>
-      </table>  
+      </table>
       {/* Edit
                 </button>
                 <button
@@ -195,7 +197,6 @@ export default function Product() {
           ))}
         </tbody>
       </table> */}{" "}
-      
       <Modal
         opened={isModalOpen}
         onClose={() => setIsModalopen(false)}
@@ -239,14 +240,14 @@ export default function Product() {
             required
             className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
           />
-           <input
-       type="text"
-        name="modelNumber"
-       value={modelNumber}
-          onChange={(e) => setModelNumber(e.target.value)}
-         placeholder="Model Number"
-          required
-         className="border border-purple-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
+          <input
+            type="text"
+            name="modelNumber"
+            value={modelNumber}
+            onChange={(e) => setModelNumber(e.target.value)}
+            placeholder="Model Number"
+            required
+            className="border border-purple-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
           />
           <select
             name="category"
