@@ -10,6 +10,7 @@ import AuthComponent from "./components/AuthComponent";
 import ProductDetails from "./pages/product-details/ProductDetails";
 import ProductAdd from "./pages/product-add/ProductAdd";
 import ProductEdit from "./pages/product-edit/ProductEdit";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 export default function AppRoutes() {
   return (
     <Routes>
@@ -17,6 +18,7 @@ export default function AppRoutes() {
         path="/dashboard"
         element={<PrivateComponent Components={Dashboard} />}
       >
+        <Route index element={<AdminDashboard />} />
         <Route path="product" element={<Product />} />
         <Route path="product/:id" element={<ProductDetails />} />
         <Route path="product-add" element={<ProductAdd />} />
@@ -28,6 +30,7 @@ export default function AppRoutes() {
         {/* <Route path="product/edit/:id" element={<ProductDetails />} /> */}
         <Route path="users" element={<Users />} />
         <Route path="category" element={<Category />} />
+        <Route path="admin" element={<AdminDashboard />} />
       </Route>
       <Route path="/login" element={<AuthComponent Components={Login} />} />
       <Route path="/signup" element={<AuthComponent Components={Signup} />} />

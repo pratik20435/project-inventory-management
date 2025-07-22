@@ -2,9 +2,11 @@ import { useParams } from "react-router";
 import ProductForm from "../../components/ProductForm";
 import { useEffect, useState } from "react";
 import { getProductById, updateProduct } from "../../api/Products";
+import {  useNavigate } from "react-router";
 
 export default function ProductEdit() {
   const { productId } = useParams();
+    const navigate = useNavigate();
   const [productDetails, setProductDetails] = useState(null);
 
   useEffect(() => {
@@ -28,6 +30,7 @@ export default function ProductEdit() {
       category: category,
       imageUrl: imageUrl,
     });
+     navigate("/dashboard/product");
   };
 
   console.log(productDetails, "productDetails in ProductEdit");
@@ -36,7 +39,8 @@ export default function ProductEdit() {
     // <div className="flex items-center justify-center h-screen bg-gray-100">
     //   <div className="bg-white p-8 rounded-lg shadow-md w-full max-w">
     //     <h1>Edit Product</h1>
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-green-400 via-blue-300 to-purple-300">
+    
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white p-10 rounded-2xl shadow-2xl w-full max-w-md">
         <h2 className="text-3xl font-bold text-center text-blue-700 mb-8 drop-shadow-lg tracking-wide">
           Edit Product

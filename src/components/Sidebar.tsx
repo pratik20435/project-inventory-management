@@ -1,5 +1,5 @@
 
-import { Navigate, NavLink, useNavigate } from "react-router";
+import { Link, Navigate, NavLink, useNavigate } from "react-router";
 
 export default function Sidebar() {
   const navigate = useNavigate();
@@ -9,7 +9,7 @@ export default function Sidebar() {
   }
   return (
     <div className="min-h-screen w-60 bg-gray-100 border-r border-gray-200 shadow-lg px-6 py-8 flex flex-col">
-      <h1 className="text-2xl font-bold text-blue-700 mb-10 tracking-wide">Dashboard</h1>
+      <Link to="/dashboard" className="text-2xl font-bold text-blue-700 mb-10 tracking-wide">Dashboard</Link>
       <nav className="flex flex-col gap-4">
         <NavLink
           to="product"

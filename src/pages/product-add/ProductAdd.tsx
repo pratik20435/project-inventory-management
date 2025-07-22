@@ -1,6 +1,7 @@
 import { createNewProduct, getAllProducts } from "../../api/Products";
 import ProductForm from "../../components/ProductForm";
 
+
 export default function ProductAdd() {
   const handleAddProduct = (values: any) => {
     const { product, description, price, category, imageUrl } = values;

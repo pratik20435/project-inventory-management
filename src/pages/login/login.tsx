@@ -36,6 +36,9 @@ export default function Login() {
 
      try{
        const response = await login(values);
+       if (response.user.role !== "admin") {
+        throw new Error("Unauthorized access");
+       }
     console.log(response, "@response");
     if (response.accessToken.length) {
       localStorage.setItem("token", response.accessToken);

@@ -5,21 +5,38 @@ import useStore from "../../store/Store.ts";
 import { Drawer, Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { ToastContainer } from "react-toastify";
+import { HiShoppingCart } from "react-icons/hi";
 
+  interface Cart {
+  product: {
+    _id: string;
+    name: string;
+    price: number;
+    qty: number;
+  }
+}
 export default function Dashboard() {
   const [opened, { open, close }] = useDisclosure(false);
 
-  const cart = useStore((state) => state.cart);
+  const cart = useStore ((state) => state.cart) as Cart [];
 
   return (
     <div className="flex w-screen h-screen">
       <Sidebar />
+      
       <div className="main-content flex-1 border-gray-500 w-2xs p-3">
-        <h1 className="text-3xl font-bold text-center text-purple-700  drop-shadow-lg ">
+        <div className="flex justify-between   ">
+          <div className="flex items-center justify-center w-full">
+        <h1 className="text-3xl font-bold text-center text-purple-700  drop-shadow-lg  ">
             Dashboard
           </h1>
-        <div className="flex justify-end  ">
-            <Button onClick={open}>Show cart</Button>
+          </div>
+        <div className="flex justify-end   ">
+            <HiShoppingCart
+            className="text-4xl text-red-700 cursor-pointer hover:text-purple-900 transition mr-3"
+             onClick={open} />
+            
+          </div>
           </div>
 
         <Drawer
@@ -27,7 +44,7 @@ export default function Dashboard() {
   radius="md"
   opened={opened}
   onClose={close}
-  title="Cart"
+  title="Cart-list"
   position="right"
 >
   <h1 className="text-xl font-bold mb-4">Cart Items</h1>
@@ -53,17 +70,17 @@ export default function Dashboard() {
             <td className="px-4 py-2 border-b">{idx + 1}</td>
             <td className="px-4 py-2 border-b">{item.product.name}</td>
             <td className="px-4 py-2 border-b">${item.product.price}</td>
-            {/* <td className="px-4 py-2 border-b">{item.qty}</td> */}
+            <td className="px-4 py-2 border-b">{item.qty}</td>
              <td className="px-4 py-2 border-b">
           <div className="flex items-center gap-2">
             <button
               className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 font-bold"
               onClick={() => useStore.getState().decrementCartQty(item.product._id)}
-              disabled={item.qty <= 1}
+              disabled={item.product.qty <= 1}
             >
               –
             </button>
-            <span className="px-2">{item.qty}</span>
+            <span className="px-2">{item.product.qty}</span>
             <button
               className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 font-bold"
               onClick={() => useStore.getState().incrementCartQty(item.product._id)}

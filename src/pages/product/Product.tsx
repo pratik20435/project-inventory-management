@@ -97,15 +97,16 @@ export default function Product() {
        variant="filled" onClick={() => setIsModalopen(true)}>
         Button product modal
       </Button> */}
-      <div className="flex items-center justify-start gap-21 mt-4 mb-2">
-        <h1 className="text-2xl font-bold">Create New Products</h1>
+      <div className="flex items-center justify-between mt-4 mb-2 px-4">
+        <h1 className="text-2xl font-bold">Products</h1>
         <Button
           className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow justify-end"
           variant="filled"
-          onClick={() => setIsModalopen(true)}
+          onClick={() => navigate("/dashboard/product-add")}
         >
-          Button product modal
+          Add new Product
         </Button>
+
       </div>
       <table className="min-w-full border-collapse border border-gray-200 text-center mt-8 shadow-lg rounded-lg overflow-hidden">
         <thead className="border-b border-gray-200 bg-blue-50">
