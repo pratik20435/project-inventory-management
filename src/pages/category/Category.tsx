@@ -217,7 +217,7 @@ export default function Category() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900">
+    <div className="min-h-screen flex items-center justify-center bg-fuchsia-300">
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
         <h1 className="text-2xl font-bold text-yellow-900 mb-8 text-center">Category Page</h1>
         <div>
